@@ -1,0 +1,33 @@
+{
+  "name": "new_node_structure",
+  "version": "1.0.0",
+  "description": "new_node_structure",
+  "main": "dashboard.js",
+  "scripts": {
+    "start": "nodemon dashboard.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "agenda": "^5.0.0",
+    "app-module-path": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "ejs-locals": "^1.0.2",
+    "express": "^4.19.2",
+    "gm": "^1.25.0",
+    "moment": "^2.30.1",
+    "mongoose": "^8.3.2",
+    "mongoose-pagination": "^1.0.0",
+    "named-routes": "^2.0.7",
+    "nodemon": "^3.1.0",
+    "request": "^2.88.2",
+    "route-label": "^1.2.3",
+    "underscore": "^1.13.6",
+    "url-exists": "^1.0.3",
+    "util": "^0.12.5"
+  }
+}
