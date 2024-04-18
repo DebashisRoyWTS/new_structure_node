@@ -14,7 +14,7 @@ require("dotenv").config();
 _ = require("underscore");
 
 // Import module in global scope
-// require('app-module-path').addPath(__dirname + '/app/modules');
+
 require("mongoose-pagination");
 require("dotenv").config();
 _ = require("underscore");
@@ -25,12 +25,8 @@ mongoose.set("strictQuery", false);
 global.appRoot = join(__dirname, "/app");
 config = require(resolve(join(__dirname, "app/config", "index")));
 utils = require(resolve(join(__dirname, "app/helper", "utils")));
-// global.auth = require(resolve(join(__dirname, 'app/middlewares', 'auth')))();
-mailHelper = require(appRoot + "/helper/mailer");
 
-// For track log //
-// const Logger = require(resolve(join(__dirname, 'app/helper', 'logger')));
-// const logger = new Logger();
+
 
 const app = express();
 const namedRouter = require("route-label")(app);
@@ -57,19 +53,14 @@ app.use(function (req, res, next) {
 
 const isProd = config.app.isProd;
 const getPort = config.app.port;
-const getApiFolderName = config.app.getApiFolderName;
 const getAdminFolderName = config.app.getAdminFolderName;
 app.locals.moment = require("moment");
+
 // Inclide main view path for (admin) //
 app.locals.layout_directory = "../../../views/layouts";
 app.locals.partial_directory = "../../../views/partials";
 global.generateUrl = generateUrl = (route_name, route_param = {}) =>
   namedRouter.urlFor(route_name, route_param);
-global.generateUrlWithQuery = generateUrlWithQuery = (
-  route_name,
-  route_param = {},
-  route_query = {}
-) => namedRouter.urlFor(route_name, route_param, route_query);
 
 /******************** Middleware registrations *******************/
 app.use(cors());
@@ -83,8 +74,6 @@ app.use((req, res, next) => {
   res.header("Pragma", "no-cache");
   next();
 });
-
-
 
 /**
  * Event listener for HTTP server "error" event.
@@ -112,7 +101,6 @@ const onError = (error) => {
   }
 };
 
-
 const server = http.createServer(app);
 
 (async () => {
@@ -134,7 +122,7 @@ const server = http.createServer(app);
     namedRouter.buildRouteTable();
     if (!isProd && process.env.SHOW_NAMED_ROUTES === "true") {
       routeList = namedRouter.getRouteTable();
-      //console.log(routeList);
+      console.log(routeList);
     }
     // const server = http.createServer(app);
     server.listen(getPort);
