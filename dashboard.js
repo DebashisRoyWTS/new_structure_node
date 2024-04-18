@@ -5,7 +5,7 @@ const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const engine = require("ejs-locals");
-
+const bodyParser = require('body-parser');
 const path = require("path");
 // Import module in global scope
 require("app-module-path").addPath(__dirname + "/app/modules");
@@ -66,7 +66,15 @@ global.generateUrl = generateUrl = (route_name, route_param = {}) =>
 app.use(cors());
 
 // app.use(express.static('./public'));
-app.use(express.static(path.join(__dirname, "/public")));
+app.use(bodyParser.urlencoded({
+  limit: "50mb",
+  extended: true,
+  parameterLimit: 50000
+})); // get information from html forms
+app.use(bodyParser.json({
+  limit: "50mb"
+}));
+app.use(express.static('./public'));
 
 app.use((req, res, next) => {
   res.header("Cache-Control", "private, no-cache, max-age=3600");

@@ -17,11 +17,10 @@
               <div class="card-body bg-light">
                 <div class="container">
                   <form
-                    action="/admin/blog-insert"
+                    action="<%= generateUrl('blog.insert') %>"
                     method="post"
                     id="contact-form"
                     role="form"
-                    enctype="multipart/form-data"
                   >
                     <div class="controls">
                       <div class="row">
@@ -77,7 +76,7 @@
                                 type="file"
                                 name="image"
                                 class="form-control"
-                                required="required"
+                             
                                 data-error="Image is required."
                               />
                             </div>
