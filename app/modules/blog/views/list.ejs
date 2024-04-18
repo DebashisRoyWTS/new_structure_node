@@ -1,0 +1,62 @@
+<% layout(layout_directory+'/mainLayout') -%>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Blogs</h6>
+      <br />
+      <h6><a href="<%= generateUrl('blog.form') %>">Add Content</a></h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered"
+          id="dataTable"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Publishing Date</th>
+              <th>Writer</th>
+              <th>Content Image</th>
+              <th>Content</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Test</td>
+              <td>18-04-2024</td>
+              <td>Debashis Roy</td>
+              <td>
+                <img src="" alt="no image" width="250px" height="200px" />
+              </td>
+              <td>aaaa</td>
+              <td>
+                <a href="">Edit</a>
+              </td>
+              <td>
+                <a href="">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Listing Code Ends -->
