@@ -5,10 +5,12 @@ const namedRouter = routeLabel(router);
 const blogRepo=require('../repositories/blog.repository')
 
 class AdminControllers {
+
 /**
  *  // @Method: form
  *  //@Description: To render Blog form 
  */
+
   async form(req, res) {
     try {
       // res.render("/admin/views/content.ejs");
@@ -19,10 +21,12 @@ class AdminControllers {
       throw error;
     }
   }
+
 /**
  *  // @Method: list
  *  //@Description: To render Blog list 
  */
+
   async list(req, res) {
     try {
       // res.render("/admin/views/content.ejs");
@@ -38,6 +42,7 @@ class AdminControllers {
   // @Method: insert
   // @Description:  Insert Blog into DB
   */
+ 
   async insert(req, res) {
     try {
       console.log(req.body);

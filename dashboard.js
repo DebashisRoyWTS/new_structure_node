@@ -114,8 +114,8 @@ const server = http.createServer(app);
 (async () => {
   try {
     // Database connection//
-    // await require(resolve(join(__dirname, "app/config", "database")))();
-    // await require(resolve(join(__dirname, "app/helper", "agenda")))();
+    await require(resolve(join(__dirname, "app/config", "database")))();
+    await require(resolve(join(__dirname, "app/helper", "agenda")))();
 
     /*********************** Routes Admin **********************/
     const adminApiFiles = await utils._readdir(
