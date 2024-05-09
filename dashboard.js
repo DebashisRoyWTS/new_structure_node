@@ -26,7 +26,8 @@ global.appRoot = join(__dirname, "/app");
 config = require(resolve(join(__dirname, "app/config", "index")));
 utils = require(resolve(join(__dirname, "app/helper", "utils")));
 
-
+const Logger = require(resolve(join(__dirname, 'app/helper', 'logger')));
+const logger = new Logger();
 
 const app = express();
 const namedRouter = require("route-label")(app);
@@ -61,6 +62,8 @@ app.locals.layout_directory = "../../../views/layouts";
 app.locals.partial_directory = "../../../views/partials";
 global.generateUrl = generateUrl = (route_name, route_param = {}) =>
   namedRouter.urlFor(route_name, route_param);
+  global.generateUrl = generateUrl = (route_name, route_param = {}) => namedRouter.urlFor(route_name, route_param);
+global.generateUrlWithQuery = generateUrlWithQuery = (route_name, route_param = {}, route_query = {}) => namedRouter.urlFor(route_name, route_param, route_query);
 
 /******************** Middleware registrations *******************/
 app.use(cors());
@@ -75,6 +78,11 @@ app.use(bodyParser.json({
   limit: "50mb"
 }));
 app.use(express.static('./public'));
+
+// For Error log 
+app.use(function(err, req, res, next) {
+  logger.log(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,'error');
+});
 
 app.use((req, res, next) => {
   res.header("Cache-Control", "private, no-cache, max-age=3600");
@@ -115,7 +123,6 @@ const server = http.createServer(app);
   try {
     // Database connection//
     await require(resolve(join(__dirname, "app/config", "database")))();
-    await require(resolve(join(__dirname, "app/helper", "agenda")))();
 
     /*********************** Routes Admin **********************/
     const adminApiFiles = await utils._readdir(

@@ -2,14 +2,13 @@ const express = require("express");
 const routeLabel = require("route-label");
 const router = express.Router();
 const namedRouter = routeLabel(router);
-const blogRepo=require('../repositories/blog.repository')
+const blogRepo = require("../repositories/blog.repository");
 
 class AdminControllers {
-
-/**
- *  // @Method: form
- *  //@Description: To render Blog form 
- */
+  /**
+   *  // @Method: form
+   *  //@Description: To render Blog form
+   */
 
   async form(req, res) {
     try {
@@ -22,61 +21,181 @@ class AdminControllers {
     }
   }
 
-/**
- *  // @Method: list
- *  //@Description: To render Blog list 
- */
+  /**
+   *  // @Method: list
+   *  //@Description: To render Blog list
+   */
 
   async list(req, res) {
     try {
-      // res.render("/admin/views/content.ejs");
+      let blogData = await blogRepo.getAll(req);
+      // console.log(blogData);
       res.render("blog/views/list.ejs", {
         title: "list page",
+        data: blogData.docs,
       });
     } catch (error) {
       throw error;
     }
   }
 
-    /*
+  /* @Method: getAll
+  // @Description: To get all the Blogs from DB
+  */
+  async getAll(req, res) {
+    try {
+      let blogData = await blogRepo.getAll(req);
+      // console.log("Blog Data:", blogData); 
+      let sortOrder, sortField;
+      if (_.has(req.body, "sort")) {
+        sortOrder = req.body.sort.sort;
+        sortField = req.body.sort.field;
+      } else {
+        sortOrder = -1;
+        sortField = "_id";
+      }
+      let meta = {
+        page: req.body.pagination ? req.body.pagination.page : undefined,
+        pages: blogData.pages,
+        perpage: req.body.pagination ? req.body.pagination.perpage : undefined,
+        total: blogData.total,
+        sort: sortOrder,
+        field: sortField,
+      };
+
+      return {
+        status: 200,
+        meta: meta,
+        data: blogData.docs,
+        message: `Data fetched successfully.`,
+      };
+    } catch (e) {
+      console.error("Error in getAll:", e); // Log the error
+      return { status: 500, data: [], message: e.message };
+    }
+  }
+
+  /*
   // @Method: insert
   // @Description:  Insert Blog into DB
   */
- 
+
   async insert(req, res) {
     try {
-      console.log(req.body);
-      // let checktitle = await blogRepo.getByField({ isDeleted: false, title: req.body.title.trim() });
-      // if (!_.isEmpty(checktitle)) {
-      //     req.flash('error', "Sorry, Blog already exists with this title.");
-      //     res.redirect(namedRouter.urlFor("blog.form"));
-      // } else {
-      //   let saveblog = await blogRepo.save(req.body);
-      //   if (_.isObject(saveblog)) {
-      //       let allUsers = await userRepo.getAllByField({
-      //         'isDeleted': false,
-      //         '_id':{$ne:req.user._id}
-      //       })
-      
-      //       let userData = allUsers.map(doc => {
-      //         return {
-      //           user_id: doc._id,
-      //           message: "New blog added",
-      //           ref_type: "Blog",
-      //           ref_id: saveblog._id,
-      //           isDeleted: false,
-      //         };
-      //       });
-      //   }
-      //   console.log("success", "Blog added successfully.");
-      //   res.redirect(namedRouter.urlFor("blog.list"));
-      // }
-    } catch (e) {
+      // console.log(req.body);
+      let checktitle = await blogRepo.getByField({
+        // isDeleted: false,
+        title: req.body.title.trim(),
+      });
+      if (!_.isEmpty(checktitle)) {
+        console.log("error", "Sorry, Blog already exists with this title.");
+        res.redirect(namedRouter.urlFor("blog.form"));
+      } else {
+        let saveData = await blogRepo.save(req.body);
+        if (!_.isEmpty(saveData) && saveData._id) {
+          console.log("success", "Blog Added Successfully!");
+          res.redirect(namedRouter.urlFor("blog.list"));
+        } else {
+          console.log("error", "Blog Not Added Successfully!");
+          res.redirect(namedRouter.urlFor("blog.create"));
+        }
+      }
+    } catch (err) {
       // const error = errorHandler(e);
       // console.log("error", error.message);
-      // res.redirect(namedRouter.urlFor("blog.form"));
+      res.redirect(namedRouter.urlFor("blog.form"));
+      console.log(err);
+      throw err;
     }
-  };
+  }
+
+  /**
+   * @Method edit
+   * @Description To Show The Edit Form
+   */
+  async edit(req, res) {
+    try {
+      let blogData = await blogRepo.getById(req.params.id);
+      if (!_.isEmpty(blogData)) {
+        res.render("blog/views/edit", {
+          response: blogData,
+        });
+      } else {
+        console.log("error", "Blog Not Found!");
+        res.redirect(namedRouter.urlFor("blog.list"));
+      }
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  /**
+   * @Method update
+   * @Description To Update Data
+   */
+  async update(req, res) {
+    try {
+      req.body.title = req.body.title.trim();
+      if (_.isEmpty(req.body.title)) {
+        console.log("error", "Field should not be empty!");
+        res.redirect(namedRouter.urlFor("blog.create"));
+      } else {
+        const blogId = req.body.id;
+        let isTitleExists = await blogRepo.getByField({
+          title: { $regex: "^" + req.body.title.trim() + "$", $options: "i" },
+          _id: { $ne: blogId },
+          isDeleted: false,
+        });
+        if (!_.isEmpty(isTitleExists)) {
+          console.log("error", "Title Already Exists!");
+          res.redirect(namedRouter.urlFor("blog.edit", { id: blogId }));
+        } else {
+          let blogData = await blogRepo.getById(blogId);
+          let blogUpdate = await blogRepo.updateById(req.body, blogId);
+          if (!_.isEmpty(blogUpdate) && blogUpdate._id) {
+            console.log("success", "Blog Updated Successfully");
+            res.redirect(namedRouter.urlFor("blog.list"));
+          } else {
+            console.log("error", "Blog Failed To Update!");
+            res.redirect(namedRouter.urlFor("blog.list"));
+          }
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  /**
+   * @Method delete
+   * @Description Delete Data
+   */
+  async delete(req, res) {
+    console.log("Yes");
+    try {
+      let blogDeletedData = await blogRepo.getById(req.params.id);
+      if (!_.isEmpty(blogDeletedData)) {
+        let blogDelete = await blogRepo.updateById(
+          { isDeleted: true },
+          blogDeletedData._id
+        );
+        if (!_.isEmpty(blogDelete) && blogDelete._id) {
+          console.log("success", "Blog Deleted Successfully");
+          res.redirect(namedRouter.urlFor("blog.list"));
+        } else {
+          console.log("error", "Sorry Blog Not Deleted");
+          res.redirect(namedRouter.urlFor("blog.list"));
+        }
+      } else {
+        console.log("error", "Sorry Blog not found");
+        res.redirect(namedRouter.urlFor("blog.list"));
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 module.exports = new AdminControllers();
