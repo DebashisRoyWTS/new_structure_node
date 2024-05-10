@@ -15,10 +15,6 @@ $(function () {
           data.page = data.start / data.length + 1;
           data.perpage = data.length;
         },
-        dataSrc: function (data) {
-          console.log(data); // Log the data received from the server
-          return data.data; // Return the data array
-        },
       },
       columns: [
         {
@@ -26,7 +22,7 @@ $(function () {
           render: function (data, type, row, meta) {
             // Render the serial number
             return meta.row + 1;
-          }
+          },
         },
         { data: "title" },
         { data: "date" },
