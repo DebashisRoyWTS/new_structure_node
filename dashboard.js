@@ -17,7 +17,6 @@ _ = require("underscore");
 
 require("mongoose-pagination");
 require("dotenv").config();
-_ = require("underscore");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 

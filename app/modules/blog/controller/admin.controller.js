@@ -42,25 +42,20 @@ class AdminControllers {
   /* @Method: getAll
   // @Description: To get all the Blogs from DB
   */
+
+
   async getAll(req, res) {
     try {
-      let blogData = await blogRepo.getAll(req);
-      // console.log("Blog Data:", blogData); 
-      let sortOrder, sortField;
-      if (_.has(req.body, "sort")) {
-        sortOrder = req.body.sort.sort;
-        sortField = req.body.sort.field;
-      } else {
-        sortOrder = -1;
-        sortField = "_id";
-      }
+      let page = req.body.page || 1; // Default page
+      let perpage = req.body.perpage || 10; // Default items per page
+
+      let blogData = await blogRepo.getAll(req, page, perpage);
+
       let meta = {
-        page: req.body.pagination ? req.body.pagination.page : undefined,
-        pages: blogData.pages,
-        perpage: req.body.pagination ? req.body.pagination.perpage : undefined,
+        page: page,
+        pages: Math.ceil(blogData.total / perpage),
+        perpage: perpage,
         total: blogData.total,
-        sort: sortOrder,
-        field: sortField,
       };
 
       return {

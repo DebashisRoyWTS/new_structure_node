@@ -10,8 +10,24 @@ $(function () {
       ajax: {
         url: `${window.location.protocol}//${window.location.host}/blog/getall`,
         method: "post",
+        data: function (data) {
+          // Send the page number to the server
+          data.page = data.start / data.length + 1;
+          data.perpage = data.length;
+        },
+        dataSrc: function (data) {
+          console.log(data); // Log the data received from the server
+          return data.data; // Return the data array
+        },
       },
       columns: [
+        {
+          data: null,
+          render: function (data, type, row, meta) {
+            // Render the serial number
+            return meta.row + 1;
+          }
+        },
         { data: "title" },
         { data: "date" },
         { data: "writer" },

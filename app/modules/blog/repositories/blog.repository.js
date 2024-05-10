@@ -1,7 +1,7 @@
 const blogInfo = require("../model/blog.model");
 
 const blogRepository = {
-  getAll: async (req) => {
+    getAll: async (req, page, perpage) => {
     try {
       var conditions = {};
       var and_clauses = [];
@@ -68,18 +68,20 @@ const blogRepository = {
         },
         sortOperator,
       ]);
-      var options = {
-        page: req.body.page,
-        limit: req.body.length,
+      const options = {
+        page: page,
+        limit: perpage,
       };
+
       let allRecord = await blogInfo.aggregatePaginate(aggregate, options);
-      // console.log('aggregation: ',aggregate)
       return allRecord;
     } catch (e) {
       throw e;
     }
   },
 
+
+  
   getById: async (id) => {
     try {
       let record = await blogInfo.findById(id);
