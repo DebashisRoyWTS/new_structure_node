@@ -3,6 +3,7 @@ const routeLabel = require("route-label");
 const router = express.Router();
 const namedRouter = routeLabel(router);
 const blogRepo = require("../repositories/blog.repository");
+const fs =require('fs')
 
 class AdminControllers {
   /**
@@ -43,7 +44,6 @@ class AdminControllers {
   // @Description: To get all the Blogs from DB
   */
 
-
   async getAll(req, res) {
     try {
       let page = req.body.page || 1; // Default page
@@ -79,13 +79,19 @@ class AdminControllers {
     try {
       // console.log(req.body);
       let checktitle = await blogRepo.getByField({
-        // isDeleted: false,
+        isDeleted: false,
         title: req.body.title.trim(),
       });
+      console.log("checktitle =>", checktitle);
       if (!_.isEmpty(checktitle)) {
         console.log("error", "Sorry, Blog already exists with this title.");
         res.redirect(namedRouter.urlFor("blog.form"));
       } else {
+        if (req.files && req.files.length) {
+          for (let file of req.files) {
+            req.body[file.fieldname] = file.filename;
+          }
+        }
         let saveData = await blogRepo.save(req.body);
         if (!_.isEmpty(saveData) && saveData._id) {
           console.log("success", "Blog Added Successfully!");
@@ -147,6 +153,12 @@ class AdminControllers {
           res.redirect(namedRouter.urlFor("blog.edit", { id: blogId }));
         } else {
           let blogData = await blogRepo.getById(blogId);
+          if (req.files.length > 0) {
+            req.body.image = req.files[0].filename;
+            if (!_.isEmpty(blogData) && !_.isEmpty(blogData.image) && fs.existsSync("./public/uploads/blog/" + blogData.image)) {
+                fs.unlinkSync("./public/uploads/blog/" + blogData.image);
+            }
+        }
           let blogUpdate = await blogRepo.updateById(req.body, blogId);
           if (!_.isEmpty(blogUpdate) && blogUpdate._id) {
             console.log("success", "Blog Updated Successfully");

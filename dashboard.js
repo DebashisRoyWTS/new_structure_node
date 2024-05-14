@@ -1,12 +1,13 @@
 // core modules
 const { join, resolve } = require("path");
 const http = require("http");
+
 // 3rd party modules
 const express = require("express");
 const cors = require("cors");
 const engine = require("ejs-locals");
-const bodyParser = require('body-parser');
-const path = require("path");
+const bodyParser = require("body-parser");
+
 // Import module in global scope
 require("app-module-path").addPath(__dirname + "/app/modules");
 
@@ -25,7 +26,7 @@ global.appRoot = join(__dirname, "/app");
 config = require(resolve(join(__dirname, "app/config", "index")));
 utils = require(resolve(join(__dirname, "app/helper", "utils")));
 
-const Logger = require(resolve(join(__dirname, 'app/helper', 'logger')));
+const Logger = require(resolve(join(__dirname, "app/helper", "logger")));
 const logger = new Logger();
 
 const app = express();
@@ -59,28 +60,38 @@ app.locals.moment = require("moment");
 // Inclide main view path for (admin) //
 app.locals.layout_directory = "../../../views/layouts";
 app.locals.partial_directory = "../../../views/partials";
+
 global.generateUrl = generateUrl = (route_name, route_param = {}) =>
   namedRouter.urlFor(route_name, route_param);
-  global.generateUrl = generateUrl = (route_name, route_param = {}) => namedRouter.urlFor(route_name, route_param);
-global.generateUrlWithQuery = generateUrlWithQuery = (route_name, route_param = {}, route_query = {}) => namedRouter.urlFor(route_name, route_param, route_query);
+
 
 /******************** Middleware registrations *******************/
 app.use(cors());
 
 // app.use(express.static('./public'));
-app.use(bodyParser.urlencoded({
-  limit: "50mb",
-  extended: true,
-  parameterLimit: 50000
-})); // get information from html forms
-app.use(bodyParser.json({
-  limit: "50mb"
-}));
-app.use(express.static('./public'));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+); // get information from html forms
+app.use(
+  bodyParser.json({
+    limit: "50mb",
+  })
+);
 
-// For Error log 
-app.use(function(err, req, res, next) {
-  logger.log(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,'error');
+app.use(express.static("./public"));
+
+// For Error log
+app.use(function (err, req, res, next) {
+  logger.log(
+    `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${
+      req.method
+    } - ${req.ip}`,
+    "error"
+  );
 });
 
 app.use((req, res, next) => {
@@ -127,10 +138,10 @@ const server = http.createServer(app);
     const adminApiFiles = await utils._readdir(
       `./app/routes/${getAdminFolderName}`
     );
+
     adminApiFiles.forEach((file) => {
       if (!file && file[0] == ".") return;
       namedRouter.use("", require(join(__dirname, file)));
-      // namedRouter.use('', `/${getAdminFolderName}`, require(join(__dirname, file)));
     });
 
     namedRouter.buildRouteTable();

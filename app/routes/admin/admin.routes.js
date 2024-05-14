@@ -3,6 +3,40 @@ const routeLabel = require("route-label");
 const router = express.Router();
 const namedRouter = routeLabel(router);
 const adminController = require("../../modules/blog/controller/admin.controller");
+const multer = require("multer");
+const fs = require("fs");
+
+//file handle
+const Storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    if (!fs.existsSync("./public/uploads/blog")) {
+      fs.mkdirSync("./public/uploads/blog");
+    }
+    callback(null, "./public/uploads/blog");
+  },
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + "_" + file.originalname.replace(/\s/g, "_"));
+  },
+});
+
+const uploadFile = multer({
+  storage: Storage,
+  fileFilter: function (req, file, cb) {
+    if (
+      file.mimetype !== "image/jpeg" &&
+      file.mimetype !== "image/jpg" &&
+      file.mimetype !== "image/png"
+    ) {
+      req.fileValidationError = "Only support jpeg, jpg or png file types.";
+      return cb(
+        null,
+        false,
+        new Error("Only support jpeg, jpg or png file types")
+      );
+    }
+    cb(null, true);
+  },
+});
 
 // Route to show the page as Listing
 namedRouter.post("blog.getall", "/blog/getall", async (req, res) => {
@@ -19,9 +53,19 @@ namedRouter.post("blog.getall", "/blog/getall", async (req, res) => {
 });
 namedRouter.get("blog.form", "/blog/form", adminController.form);
 namedRouter.get("blog.list", "/blog/list", adminController.list);
-namedRouter.post("blog.insert", "/blog/insert", adminController.insert);
+namedRouter.post(
+  "blog.insert",
+  "/blog/insert",
+  uploadFile.any(),
+  adminController.insert
+);
 namedRouter.get("blog.edit", "/blog/edit/:id", adminController.edit);
-namedRouter.post("blog.update", "/blog/update", adminController.update);
+namedRouter.post(
+  "blog.update",
+  "/blog/update",
+  uploadFile.any(),
+  adminController.update
+);
 namedRouter.get("blog.delete", "/blog/delete/:id", adminController.delete);
 
 module.exports = router;

@@ -27,7 +27,15 @@ $(function () {
         { data: "title" },
         { data: "date" },
         { data: "writer" },
-        { data: "image" },
+        {
+          // For the content image
+          data: "image",
+          orderable: false,
+          searchable: false,
+          render: function (data, type, full, meta) {
+            return `<img style="max-height: 45px" src="${window.location.protocol}//${window.location.host}/uploads/blog/${data}">`;
+          },
+        },
         { data: "content" },
         {
           data: null,

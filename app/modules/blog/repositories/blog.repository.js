@@ -1,7 +1,7 @@
 const blogInfo = require("../model/blog.model");
 
 const blogRepository = {
-    getAll: async (req, page, perpage) => {
+  getAll: async (req, page, perpage) => {
     try {
       var conditions = {};
       var and_clauses = [];
@@ -80,8 +80,6 @@ const blogRepository = {
     }
   },
 
-
-  
   getById: async (id) => {
     try {
       let record = await blogInfo.findById(id);
@@ -95,7 +93,9 @@ const blogRepository = {
   },
 
   getByField: async (params) => {
-    let record = await blogInfo.findOne({ params });
+    console.log("params =>", params);
+    let record = await blogInfo.findOne(params).exec();
+    console.log("record =>", record);
     try {
       if (!record) {
         return null;
@@ -103,23 +103,6 @@ const blogRepository = {
       return record;
     } catch (e) {
       console.log(e);
-      return e;
-    }
-  },
-
-  getAllByField: async (params) => {
-    let record = await blogInfo
-      .find(params)
-      .sort({
-        _id: 1,
-      })
-      .exec();
-    try {
-      if (!record) {
-        return null;
-      }
-      return record;
-    } catch (e) {
       return e;
     }
   },
@@ -133,41 +116,6 @@ const blogRepository = {
       return save;
     } catch (e) {
       return e;
-    }
-  },
-
-  getStats: async () => {
-    try {
-      let count = await blogInfo.find({ isDeleted: false }).count();
-      console.log(count);
-      return {
-        count,
-      };
-    } catch (e) {
-      return e;
-    }
-  },
-
-  delete: async (id) => {
-    try {
-      let record = await blogInfo.findById(id);
-      if (record) {
-        let recordDelete = await blogInfo.findByIdAndUpdate(
-          id,
-          {
-            isDeleted: true,
-          },
-          {
-            new: true,
-          }
-        );
-        if (!recordDelete) {
-          return null;
-        }
-        return recordDelete;
-      }
-    } catch (e) {
-      throw e;
     }
   },
 
