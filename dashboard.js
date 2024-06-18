@@ -7,6 +7,9 @@ const express = require("express");
 const cors = require("cors");
 const engine = require("ejs-locals");
 const bodyParser = require("body-parser");
+const flash = require("connect-flash");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 // Import module in global scope
 require("app-module-path").addPath(__dirname + "/app/modules");
@@ -25,7 +28,7 @@ mongoose.set("strictQuery", false);
 global.appRoot = join(__dirname, "/app");
 config = require(resolve(join(__dirname, "app/config", "index")));
 utils = require(resolve(join(__dirname, "app/helper", "utils")));
-
+global.auth = require(resolve(join(__dirname, "app/middlewares", "auth")))();
 const Logger = require(resolve(join(__dirname, "app/helper", "logger")));
 const logger = new Logger();
 
@@ -64,11 +67,18 @@ app.locals.partial_directory = "../../../views/partials";
 global.generateUrl = generateUrl = (route_name, route_param = {}) =>
   namedRouter.urlFor(route_name, route_param);
 
-
 /******************** Middleware registrations *******************/
 app.use(cors());
-
-// app.use(express.static('./public'));
+app.use(flash());
+app.use(
+  session({
+    secret: "delivery@&beverage@#",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(cookieParser());
+app.use(express.static("./public"));
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",
@@ -98,6 +108,12 @@ app.use((req, res, next) => {
   res.header("Cache-Control", "private, no-cache, max-age=3600");
   res.header("Expires", "-1");
   res.header("Pragma", "no-cache");
+  auth = require(resolve(join(__dirname, "app/middlewares", "auth")))(
+    req,
+    res,
+    next
+  );
+  app.use(auth.initialize());
   next();
 });
 

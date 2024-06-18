@@ -1,0 +1,51 @@
+<% layout(layout_directory + '/mainLayout') -%>
+
+<div class="container">
+  <div class="">
+    <div class="">
+      <h3 class=""><%= page_title %></h3>
+      <span class=""></span>
+    </div>
+  </div>
+
+  <form action="<%= generateUrl('role.store') %>" method="post">
+    <div class="mb-3">
+      <label for="roleDisplayName" class="form-label">Role</label>
+      <input
+        type="text"
+        name="roleDisplayName"
+        placeholder="Role Title"
+        class="form-control"
+        id="roleDisplayName"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="desc" class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        id="desc"
+        name="desc"
+        rows="3"
+      ></textarea>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <a href="<%= generateUrl('role.list') %>" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-success">Create</button>
+      </div>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  // For date picker calendar
+  $(function () {
+    var date = new Date();
+    date.setDate(date.getDate() - 1);
+    $("#expiry_date").datepicker({
+      autoclose: true,
+      todayHighlight: true,
+      format: "yyyy-mm-dd",
+      startDate: date,
+    });
+  });
+</script>

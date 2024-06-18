@@ -2,7 +2,7 @@ const express = require("express");
 const routeLabel = require("route-label");
 const router = express.Router();
 const namedRouter = routeLabel(router);
-const adminController = require("../../modules/blog/controller/admin.controller");
+const adminController = require("blog/controller/admin.controller");
 const multer = require("multer");
 const fs = require("fs");
 
@@ -37,6 +37,8 @@ const uploadFile = multer({
     cb(null, true);
   },
 });
+
+// namedRouter.all('/blog*', auth.authenticate);
 
 // Route to show the page as Listing
 namedRouter.post("blog.getall", "/blog/getall", async (req, res) => {

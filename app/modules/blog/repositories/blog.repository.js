@@ -1,4 +1,4 @@
-const blogInfo = require("../model/blog.model");
+const blogInfo = require("blog/model/blog.model");
 
 const blogRepository = {
   getAll: async (req, page, perpage) => {
@@ -74,6 +74,7 @@ const blogRepository = {
       };
 
       let allRecord = await blogInfo.aggregatePaginate(aggregate, options);
+      console.log(allRecord);
       return allRecord;
     } catch (e) {
       throw e;
@@ -132,6 +133,14 @@ const blogRepository = {
       return e;
     }
   },
+  getBlogCountByParam: async (params) => {
+    try {
+        let blog = await blogInfo.countDocuments(params);
+        return blog;
+    } catch (e) {
+        throw (e);
+    }
+},
 };
 
 module.exports = blogRepository;

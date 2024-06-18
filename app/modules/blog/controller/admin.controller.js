@@ -2,7 +2,7 @@ const express = require("express");
 const routeLabel = require("route-label");
 const router = express.Router();
 const namedRouter = routeLabel(router);
-const blogRepo = require("../repositories/blog.repository");
+const blogRepo = require("blog/repositories/blog.repository");
 const fs =require('fs')
 
 class AdminControllers {
