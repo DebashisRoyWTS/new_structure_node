@@ -23,10 +23,16 @@ class UserController {
     // @Description: user Login Render
     */
   async login(req, res) {
-    if (req.session && req.session.token) {
-      res.redirect(namedRouter.urlFor("user.dashboard"));
-    } else {
-      res.render("user/views/login.ejs");
+    try {
+      console.log(req.session, "tokennnnnnnnnnnn");
+      if (req.session && req.session.token) {
+        res.redirect(namedRouter.urlFor("user.dashboard"));
+      } else {
+        res.render("user/views/login.ejs");
+      }
+    } catch (err) {
+      console.log(err, "errrrrrrrrrr");
+      throw err;
     }
   }
 

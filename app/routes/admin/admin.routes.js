@@ -38,7 +38,7 @@ const uploadFile = multer({
   },
 });
 
-// namedRouter.all('/blog*', auth.authenticate);
+namedRouter.all('/blog*', auth.authenticate);
 
 // Route to show the page as Listing
 namedRouter.post("blog.getall", "/blog/getall", async (req, res) => {

@@ -114,6 +114,9 @@ app.use((req, res, next) => {
     next
   );
   app.use(auth.initialize());
+  if (req.session && req.session.token) {
+    req.headers["token"] = req.session.token;
+  }
   next();
 });
 

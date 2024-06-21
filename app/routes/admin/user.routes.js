@@ -52,10 +52,10 @@ namedRouter.get("user.login", "/", userController.login);
 // login process route
 namedRouter.post("user.login.process", "/login", userController.signin);
 
-namedRouter.all("/*", auth.authenticate);
+namedRouter.all("/user*", auth.authenticate);
 
 // dashboard route
-namedRouter.get("user.dashboard", "/dashboard", userController.dashboard);
+namedRouter.get("user.dashboard", "/user/dashboard", userController.dashboard);
 
 // User List
 namedRouter.get("user.listing", "/user/listing", userController.list);
