@@ -46,7 +46,7 @@ class UserController {
       let roles = await roleRepo.getDistinctDocument("_id", {
         rolegroup: "admin",
         isDeleted: false,
-      });
+      }); 
       req.body.roles = roles;
       let userData = await userRepo.fineOneWithRole(req.body);
       if (userData.status == 500) {

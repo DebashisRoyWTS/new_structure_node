@@ -1,14 +1,12 @@
 const mongoose = require("mongoose");
 
-const URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_DATABASE}?retryWrites=true&w=majority`;
+const URI = `mongodb+srv://${process.env.DB_HOST}/${process.env.DB_DATABASE}`;
 
 let options = {
   auth: {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
   },
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
 };
 
 module.exports = async () => {
@@ -16,6 +14,6 @@ module.exports = async () => {
     await mongoose.connect(URI, options);
     console.log("DB connected successfully");
   } catch (error) {
-    console.error(error.message);
+    console.error("Error connecting to the database:", error.message);
   }
 };

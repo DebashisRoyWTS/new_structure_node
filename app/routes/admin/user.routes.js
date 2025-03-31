@@ -73,14 +73,4 @@ namedRouter.post("user.getall", "/user/getall", async (req, res) => {
   }
 });
 
-// User Edit Route
-// namedRouter.get("admin.user.edit", "/user/edit/:id", userController.edit);
-
-// User Update Route
-// namedRouter.post("user.update", '/user/update', uploadFile.any(), userController.update);
-
-// User Delete Route
-// namedRouter.get("user.delete", "/user/delete/:id", userController.delete);
-
-// Export the express.Router() instance
 module.exports = router;
